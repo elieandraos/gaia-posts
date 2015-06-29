@@ -11,7 +11,7 @@ The controller, (validation) request and the routes will be autoloaded from the 
 #### Installation
 Run the following command in your terminal 
 ```
-composer require eandraos/gaia-pages
+composer require eandraos/gaia-posts
 ```
 
 Then register this service provider with Laravel in config/app.php
