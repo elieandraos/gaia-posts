@@ -4,7 +4,6 @@
 	</button>
 </a>
 
-
 {!! Form::model($postType, ['data-remote' => true, 'data-callback' => 'removeTableRow', 'class' => 'remote-form', 'route' => ['admin.post-types.delete', $postType->id]]) !!}
 	<a href="#">
 		<button type="button" class="btn btn-danger btn-trans btn-xs btn-action " data-toggle="tooltip" data-placement="top" title="Delete Post Type" 

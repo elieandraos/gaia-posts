@@ -9,22 +9,17 @@ use Redirect;
 use App;
 use Input;
 use Flash;
-use View;
 
-class PostTypeController extends Controller {
+class PostController extends Controller {
 
-
+	
 	public function __construct(PostTypeRepositoryInterface $postTypeRepositoryInterface)
 	{
 		$this->postTypeRepos = $postTypeRepositoryInterface;
 		$this->authUser = Auth::user();
 
-		//check permissions
 		if(!$this->authUser->is('superadmin'))
 			App::abort(403, 'Access denied');
-
-		//share the post type submenu to the layout
-		View::share('postTypesSubmenu', $this->postTypeRepos->renderMenu());
 	}
 
 
@@ -33,10 +28,22 @@ class PostTypeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function index($postTypeId)
 	{
-		$postTypes = $this->postTypeRepos->getAll();
-		return view('admin.post-types.index', [ 'postTypes' => $postTypes]);
+		$this->postType = $this->postTypeRepos->find($postTypeId);
+		die($this->postType->title);
+	}
+
+
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function create($postTypeId)
+	{
+		$this->postType = $this->postTypeRepos->find($postTypeId);
+		die($this->postType->title);
 	}
 
 
@@ -47,13 +54,19 @@ class PostTypeController extends Controller {
 	 */
 	public function store()
 	{
-		$input = Input::all();
-		$this->postTypeRepos->create($input);
-
-		Flash::success('Post Type was created successfully.');
-		return Redirect::route('admin.post-types.list');
+		//
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		//
+	}
 
 	/**
 	 * Show the form for editing the specified resource.
@@ -63,10 +76,8 @@ class PostTypeController extends Controller {
 	 */
 	public function edit($id)
 	{
-		$postType = $this->postTypeRepos->find($id);
-		return view('admin.post-types.edit', ['postType' => $postType] );
+		//
 	}
-
 
 	/**
 	 * Update the specified resource in storage.
@@ -76,13 +87,8 @@ class PostTypeController extends Controller {
 	 */
 	public function update($id)
 	{
-		$input = Input::all();
-		$postType = $this->postTypeRepos->find($id);
-		$postType->update($input);
-		Flash::success('Post Type was updated successfully.');
-		return Redirect::route('admin.post-types.list');
+		//
 	}
-
 
 	/**
 	 * Remove the specified resource from storage.
@@ -92,8 +98,7 @@ class PostTypeController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		$postType = $this->postTypeRepos->find($id);
-		$postType->delete();
+		//
 	}
 
 }

@@ -27,6 +27,10 @@
 				@if (!count($postTypes))
 					<p class="unfortunate">You haven't created any post type yet :(</p>
 				@else
+					<p>
+						After creating a new post type, you have to <a href="/admin/categories/roots-post-types">configure</a> its root category. <br/>
+						Every created post type, has a <a href="/admin/categories">category</a> relation.
+					</p>
 					<table class="table table-hover">
 					  <thead>
 					    <tr>
@@ -37,7 +41,16 @@
 					  <tbody>
 					    @foreach($postTypes as $postType)
 							<tr>
-								<td>{{ $postType->title }}</td>
+								<td>
+									{{ $postType->title }}
+									@if(! $postType->getConfiguredRootCategory())
+										<a href="/admin/categories/roots-post-types">
+											<button type="button" class="btn  btn-xs btn-danger " data-toggle="tooltip" data-placement="top" title="Root Category Not Configured.">
+												<i class="fa fa-exclamation-circle"></i>
+											</button>
+										</a>
+									@endif
+								</td>
 								<td>
 									@include('admin.post-types._actions', ["postType" => $postType])
 								</td>

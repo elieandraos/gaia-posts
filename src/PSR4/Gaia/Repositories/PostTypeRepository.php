@@ -1,6 +1,7 @@
 <?php namespace Gaia\Repositories;
 
 use App\Models\PostType;
+use View;
 
 class PostTypeRepository extends DbRepository implements PostTypeRepositoryInterface 
 {
@@ -13,7 +14,7 @@ class PostTypeRepository extends DbRepository implements PostTypeRepositoryInter
 	 */
 	public function getAll()
 	{	
-		return PostType::latest('created_at')->paginate($this->limit);
+		return PostType::latest('created_at')->get();
 	}
 	
 
@@ -60,6 +61,28 @@ class PostTypeRepository extends DbRepository implements PostTypeRepositoryInter
 	{
 		$post_type = $this->find($id);
 		$post_type->delete();
+	}
+
+
+	/**
+	 * Renders the post types links in the left menu of the backend
+	 * @return type
+	 */
+	public function renderMenu()
+	{
+		$postTypes = $this->getAll();
+		$view = "";
+
+		if($postTypes->count())
+		{
+			foreach($postTypes as $postType)
+			{
+				$html = View::make('admin.post-types.menu-item', ['postType' => $postType]);
+				$view .= $html->render();
+			}
+		}
+
+		return $view;
 	}
 }
 ?>

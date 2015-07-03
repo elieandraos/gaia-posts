@@ -11,6 +11,7 @@
 |
 */
 
+//Route::model('post-types', 'App\Models\PostType');
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
 {
@@ -22,6 +23,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
    Route::post('/post-types/{id}/update', ['as' => 'admin.post-types.update', 'uses' => 'Gaia\Posts\PostTypeController@update']);
    Route::post('/post-types/{id}/delete', ['as' => 'admin.post-types.delete', 'uses' => 'Gaia\Posts\PostTypeController@destroy']);
 
-   //Post Type
-   //Route::get('/post-types/{id}/posts/create', ['as' => 'admin.post-types.list', 'uses' => 'Gaia\Posts\PostController@create']);
+   //Post Routes
+   Route::get('/post-types/{posttypeid}/posts/', ['as' => 'admin.posts.list', 'uses' => 'Gaia\Posts\PostController@index']);
+   Route::get('/post-types/{posttypeid}/posts/create', ['as' => 'admin.posts.create', 'uses' => 'Gaia\Posts\PostController@create']);
+   Route::post('/post-types/{posttypeid}/posts/store', ['as' => 'admin.posts.store', 'uses' => 'Gaia\Posts\PostController@store']);
 });
