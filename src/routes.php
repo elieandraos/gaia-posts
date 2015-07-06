@@ -27,4 +27,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
    Route::get('/post-types/{posttypeid}/posts/', ['as' => 'admin.posts.list', 'uses' => 'Gaia\Posts\PostController@index']);
    Route::get('/post-types/{posttypeid}/posts/create', ['as' => 'admin.posts.create', 'uses' => 'Gaia\Posts\PostController@create']);
    Route::post('/post-types/{posttypeid}/posts/store', ['as' => 'admin.posts.store', 'uses' => 'Gaia\Posts\PostController@store']);
+   Route::get('/post-types/{posttypeid}/posts/{id}/edit', ['as' => 'admin.posts.edit', 'uses' => 'Gaia\Posts\PostController@edit']);
+   Route::post('/post-types/{posttypeid}/posts/{id}/update', ['as' => 'admin.posts.update', 'uses' => 'Gaia\Posts\PostController@update']);
+   Route::post('/post-types/{posttypeid}/posts/{id}/delete', ['as' => 'admin.posts.delete', 'uses' => 'Gaia\Posts\PostController@destroy']);
+   Route::get('post-types/{posttypeid}/posts/{id}/translate/{locale}', ['as' => 'admin.posts.translate', 'uses' => 'Gaia\Posts\PostController@translate']);
+   Route::post('post-types/{posttypeid}/posts/{id}/translate/{locale}/store', ['as' => 'admin.posts.translate-store', 'uses' => 'Gaia\Posts\PostController@translateStore']);
+
+
 });

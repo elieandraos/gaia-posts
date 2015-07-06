@@ -13,7 +13,7 @@ class PostRepository extends DbRepository implements PostRepositoryInterface
 	 */
 	public function getAll($postTypeId = null)
 	{	
-		$posts = Posts::latest('published_at');
+		$posts = Post::latest('published_at');
 		
 		if($postTypeId)
 			return $posts->where('post_type_id', '=', $postTypeId)->paginate($this->limit);

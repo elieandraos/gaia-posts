@@ -40,6 +40,7 @@ class GaiaPostsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('Gaia\Repositories\PostTypeRepositoryInterface', 'Gaia\Repositories\PostTypeRepository');
+        $this->app->bind('Gaia\Repositories\PostRepositoryInterface', 'Gaia\Repositories\PostRepository');
 
     }
 
