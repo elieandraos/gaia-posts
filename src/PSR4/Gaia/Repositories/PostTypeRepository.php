@@ -19,6 +19,20 @@ class PostTypeRepository extends DbRepository implements PostTypeRepositoryInter
 	
 
 	/**
+	 * Returns a post type by slug
+	 * @param type $slug 
+	 * @return type
+	 */
+	public function getBySlug($slug)
+	{
+		if(!$slug)
+			return null;
+
+		return PostType::where('slug', '=', $slug)->first();
+	}
+
+	
+	/**
 	 * Returns one post type by id
 	 * @param int $id 
 	 * @return PostType
