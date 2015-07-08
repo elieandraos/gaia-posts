@@ -48,6 +48,7 @@ class PostTypeController extends Controller {
 	public function store()
 	{
 		$input = Input::all();
+		$input['slug'] = str_slug($input['title']);
 		$this->postTypeRepos->create($input);
 
 		Flash::success('Post Type was created successfully.');

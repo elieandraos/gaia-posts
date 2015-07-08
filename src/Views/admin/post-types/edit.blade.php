@@ -24,7 +24,7 @@
 			</div>
 			<div class="panel-body">
 				{!! Form::model($postType, ['route' => ['admin.post-types.update', $postType->id]]) !!}
-					@include('admin.post-types._form')
+					@include('admin.post-types._form', ['display_slug' => true])
 				{!! Form::close() !!}
 			</div>
 		</div>

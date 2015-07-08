@@ -6,7 +6,7 @@ use App\Models\CategoryModules;
 class PostType extends Model {
 
 	protected $table = "post_types";
-	protected $fillable = ['title', 'fields']; 
+	protected $fillable = ['title', 'slug', 'fields']; 
 
 
 	/**

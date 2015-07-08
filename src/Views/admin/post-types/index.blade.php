@@ -35,6 +35,7 @@
 					  <thead>
 					    <tr>
 					      <th>Title</th>
+					      <th>Slug</th>
 					      <th>Action</th>
 					    </tr>
 					  </thead>
@@ -51,6 +52,7 @@
 										</a>
 									@endif
 								</td>
+								<td>{!! $postType->slug !!}</td>
 								<td>
 									@include('admin.post-types._actions', ["postType" => $postType])
 								</td>
@@ -70,7 +72,7 @@
 			</div>
 			<div class="panel-body">
 				{!! Form::open( ['route' => ['admin.post-types.store']]) !!}
-					@include('admin.post-types._form')
+					@include('admin.post-types._form', ['display_slug' => false])
 				{!! Form::close() !!}
 			</div>
 		</div>
