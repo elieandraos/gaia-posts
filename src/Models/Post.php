@@ -13,7 +13,7 @@ class Post extends Model implements MediaLibraryModelInterface, TranslatableCont
 
 	protected $table = 'post';
 	protected $fillable = ['title', 'excerpt', 'description', 'slug', 'published_at', 'youtube_url', 'category_id', 'post_type_id'];
-	protected $translatedAttributes = ['title', 'excerpt', 'description', 'slug'];
+	protected $translatedAttributes = ['title', 'excerpt', 'description'];
 	protected $translator = 'App\Models\PostTranslation';
 	
 	
@@ -86,10 +86,15 @@ class Post extends Model implements MediaLibraryModelInterface, TranslatableCont
 	public function getImageProfileProperties()
 	{
 	    return [
-	        'featured' => ['w'=>615, 'h'=>348],
-	        'thumb'    => ['w'=>298, 'h'=>198],
+	    	//front end thumbs
+	        'featured' 		  => ['w'=>670, 'h'=>382],
+	        'thumb-large'     => ['w'=>570, 'h'=>325],
+	        'thumb-medium'    => ['w'=>270, 'h'=>192],
+	        'thumb-small'     => ['w'=>170, 'h'=>120],
+	        //social media sharing thumbs
 	        'facebook' => ['w'=>128, 'h'=>128],
 	        'twitter'  => ['w'=>128, 'h'=>128],
+	        //backend
 	        'thumb-xs' => ['w'=>60, 'h'=>60]
 	    ];
 	}    

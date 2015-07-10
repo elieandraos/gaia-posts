@@ -9,5 +9,7 @@
 		public function update($id, $input);
 		public function delete($id);
 		public function getAllByPostTypeSlug($slug, $limit);
+		public function getAllByPostTypeIdAndCategoryId($slug, $categoryId, $limit);
+		public function getAllRelated($post);
 	}
 ?>

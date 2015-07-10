@@ -18,11 +18,9 @@
 
 		<div class="form-group @if($errors->has('title')) has-error @endif">
 			{!! Form::label('title', 'Title', ['class' => 'col-sm-3 control-label']) !!}
-            <div class="col-sm-3">
+            <div class="col-sm-6">
                 {!! Form::text('title', $post->title, ['class' => 'form-control slug-target']) !!}
-            </div>
-            <div class="col-sm-3">
-                {!! Form::text('slug', $post->slug, ['class' => 'form-control txt-slug', 'placeholder' => 'URL slug']) !!}
+                {!! Form::hidden('slug', $post->slug) !!}
                 {!! Form::hidden('published_at', $post->published_at) !!}
                 {!! Form::hidden('category_id', $post->category_id) !!}
             </div>
