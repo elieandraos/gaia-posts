@@ -22,6 +22,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
    Route::get('/post-types/{id}/edit', ['as' => 'admin.post-types.edit', 'uses' => 'Gaia\Posts\PostTypeController@edit']);
    Route::post('/post-types/{id}/update', ['as' => 'admin.post-types.update', 'uses' => 'Gaia\Posts\PostTypeController@update']);
    Route::post('/post-types/{id}/delete', ['as' => 'admin.post-types.delete', 'uses' => 'Gaia\Posts\PostTypeController@destroy']);
+   Route::get('/post-types/{id}/configuration/{type}', ['as' => 'admin.post-types.configuration', 'uses' => 'Gaia\Posts\PostTypeController@checkCategoryConfiguration']);
 
    //Post Routes
    Route::get('/post-types/{posttypeid}/posts/', ['as' => 'admin.posts.list', 'uses' => 'Gaia\Posts\PostController@index']);
@@ -32,6 +33,5 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
    Route::post('/post-types/{posttypeid}/posts/{id}/delete', ['as' => 'admin.posts.delete', 'uses' => 'Gaia\Posts\PostController@destroy']);
    Route::get('post-types/{posttypeid}/posts/{id}/translate/{locale}', ['as' => 'admin.posts.translate', 'uses' => 'Gaia\Posts\PostController@translate']);
    Route::post('post-types/{posttypeid}/posts/{id}/translate/{locale}/store', ['as' => 'admin.posts.translate-store', 'uses' => 'Gaia\Posts\PostController@translateStore']);
-
 
 });

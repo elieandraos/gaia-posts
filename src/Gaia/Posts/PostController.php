@@ -41,9 +41,14 @@ class PostController extends Controller {
 		$postTypeId = $routeParamters['posttypeid'];
 		$this->postType = $this->postTypeRepos->find($postTypeId);
 
-		//get the categories
+		//get the categories, category check convert to route middleware
 		$categoryRootId = $this->postType->getConfiguredRootCategory();
-		$categories = Category::find($categoryRootId)->descendants()->get();
+		if(!$categoryRootId)
+			return Redirect::route('admin.post-types.configuration', [$postTypeId, "root"])->send();
+		$root = Category::find($categoryRootId);
+		if(!$root->descendants()->count())
+			return Redirect::route('admin.post-types.configuration', [$postTypeId, "descendants"])->send();
+		$categories = $root->descendants()->get();
 		foreach($categories as $category)
 			$this->categories[$category->id] = $category->title;
 
@@ -219,6 +224,5 @@ class PostController extends Controller {
 		Flash::success($this->postType->title.' was translated successfully.');
 		return Redirect::route('admin.posts.list', $this->postType->id);
 	}
-
 
 }

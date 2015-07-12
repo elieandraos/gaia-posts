@@ -97,4 +97,15 @@ class PostTypeController extends Controller {
 		$postType->delete();
 	}
 
+
+	/**
+	 * Check if the root category is set for the post type, and if it have descendants
+	 * @return type
+	 */
+	public function checkCategoryConfiguration($id, $type)
+	{
+		$postType = $this->postTypeRepos->find($id);
+		return view('admin.post-types.configuration', ['postType' => $postType, 'type' => $type]);
+	}
+
 }
