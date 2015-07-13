@@ -15,7 +15,9 @@ class Post extends Model implements MediaLibraryModelInterface, TranslatableCont
 	protected $fillable = ['title', 'excerpt', 'description', 'slug', 'published_at', 'youtube_url', 'category_id', 'post_type_id'];
 	protected $translatedAttributes = ['title', 'excerpt', 'description'];
 	protected $translator = 'App\Models\PostTranslation';
-	
+	//for ComponentPost input filter
+	protected $except = ['_token', 'title', 'slug', 'description', 'excerpt', 'published_at', 'image', 'youtube_url' ,  'category_id', 'post_type_id', 'remove_image', 'meta_title', 'locale', 'meta_description', 'meta_keywords', 'facebook_title', 'facebook_description', 'twitter_title', 'twitter_description'];
+
 	
 	/**********************
 	 * ELOQUANT RELATIONS *
@@ -39,6 +41,16 @@ class Post extends Model implements MediaLibraryModelInterface, TranslatableCont
 	public function seo()
 	{
 	    return $this->morphOne('App\Models\Seo', 'seoable');
+	}
+
+
+	/**
+	 * ComponentPage Relation
+	 * @return type
+	 */
+	public function componentPosts()
+	{
+		return $this->hasMany('App\Models\ComponentPost');
 	}
 
 
@@ -98,5 +110,31 @@ class Post extends Model implements MediaLibraryModelInterface, TranslatableCont
 	        'thumb-xs' => ['w'=>60, 'h'=>60]
 	    ];
 	}    
+
+
+	/**
+	 * Returns an array of Component ids with their values repsectively.
+	 * Done in PostController@edit. 
+	 * @param type $input 
+	 * @return type
+	 */
+	public function retrieveComponentIds($input)
+	{
+		//get the components ids from inputs and update their values
+		$componentIds = array_except($input, $this->except);
+		$array = [];
+
+		if(is_array($componentIds) && count($componentIds))
+		{
+			foreach($componentIds as $key => $val)
+			{
+				$id = (int)str_replace("cp_", "", $key);
+			 	(is_array($val))?$value = implode(",", $val):$value=$val; //in case of checkbox type, implode the array to string
+			 	$array[$id] = ['value' => $value];
+			}
+		}
+
+		return $array;
+	}
 
 }

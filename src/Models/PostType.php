@@ -6,7 +6,17 @@ use App\Models\CategoryModules;
 class PostType extends Model {
 
 	protected $table = "post_types";
-	protected $fillable = ['title', 'slug', 'fields']; 
+	protected $fillable = ['title', 'slug', 'fields', 'template_id']; 
+
+
+	/**
+	 * Template Relation
+	 * @return type
+	 */
+	public function template()
+	{
+		return $this->belongsTo('App\Models\Template');
+	}
 
 
 	/**

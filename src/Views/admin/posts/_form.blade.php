@@ -85,6 +85,27 @@
 <!-- Panel end -->
 
 
+ 
+<!-- Components and Sections from template -->  
+@foreach($sections as $section)
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ $section->title }}</h3>
+        </div>
+        <div class="panel-body">
+            @foreach($section->getComponentsByOrder() as $component)
+                
+                @if(isset($post))
+                    {!! $component->renderFormRow('post', $post->id) !!} 
+                @else
+                    {!! $component->renderFormRow('post', null) !!} 
+                @endif
+            @endforeach
+        </div>
+    </div>
+@endforeach
+
+
 @include('admin.seo._form')
 
 

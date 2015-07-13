@@ -5,6 +5,7 @@ use Illuminate\Routing\Controller;
 
 use Gaia\Repositories\PostTypeRepositoryInterface;
 use Gaia\Repositories\PostRepositoryInterface;
+use Gaia\Repositories\TemplateRepositoryInterface;
 use Gaia\Posts\PostRequest;
 use Gaia\Services\PostService;
 //Models
@@ -24,12 +25,13 @@ use Route;
 class PostController extends Controller {
 
 	
-	protected $postTypeRepositoryInterface, $postType, $categories;
+	protected $postTypeRepos, $postRepos, $templateRepos, $postType, $categories;
 
-	public function __construct(PostTypeRepositoryInterface $postTypeRepositoryInterface, PostRepositoryInterface $postRepositoryInterface, PostService $postService)
+	public function __construct(PostTypeRepositoryInterface $postTypeRepos, PostRepositoryInterface $postRepos, TemplateRepositoryInterface $templateRepos, PostService $postService)
 	{
-		$this->postTypeRepos = $postTypeRepositoryInterface;
-		$this->postRepos = $postRepositoryInterface;
+		$this->postTypeRepos = $postTypeRepos;
+		$this->postRepos = $postRepos;
+		$this->templateRepos = $templateRepos;
 		$this->postService = $postService;
 		$this->authUser = Auth::user();
 
@@ -41,9 +43,14 @@ class PostController extends Controller {
 		$postTypeId = $routeParamters['posttypeid'];
 		$this->postType = $this->postTypeRepos->find($postTypeId);
 
-		//get the categories
+		//get the categories, category check convert to route middleware
 		$categoryRootId = $this->postType->getConfiguredRootCategory();
-		$categories = Category::find($categoryRootId)->descendants()->get();
+		if(!$categoryRootId)
+			return Redirect::route('admin.post-types.configuration', [$postTypeId, "root"])->send();
+		$root = Category::find($categoryRootId);
+		if(!$root->descendants()->count())
+			return Redirect::route('admin.post-types.configuration', [$postTypeId, "descendants"])->send();
+		$categories = $root->descendants()->get();
 		foreach($categories as $category)
 			$this->categories[$category->id] = $category->title;
 
@@ -52,7 +59,6 @@ class PostController extends Controller {
 		$this->first_locale = array_first($this->locales, function(){return true;});
 
 		//share the post type submenu to the layout
-		$this->postTypeRepos = $postTypeRepositoryInterface;
 		View::share('postTypesSubmenu', $this->postTypeRepos->renderMenu());
 	}
 
@@ -81,8 +87,9 @@ class PostController extends Controller {
 		//if(!$this->authUser->can('create-edit-news') && !$this->authUser->is('superadmin'))
 		//	App::abort(403, 'Access denied');
 
-		$seo = new Seo;
-		return view('admin.posts.create', ['seo' => $seo, 'thumbUrl' => null, "categories" => $this->categories, "postType" => $this->postType]);
+		$seo = new Seo; 
+		$sections = $this->templateRepos->getSectionsByOrder($this->postType->template_id);
+		return view('admin.posts.create', ['seo' => $seo, 'thumbUrl' => null, "categories" => $this->categories, "postType" => $this->postType, 'sections' => $sections]);
 	}
 
 
@@ -128,7 +135,8 @@ class PostController extends Controller {
 		$mediaItems = MediaLibrary::getCollection($post, $post->getMediaCollectionName(), []);
 		(count($mediaItems))?$thumbUrl = $mediaItems[0]->getURL('thumb-xs'):$thumbUrl = null; 
 
-		return view('admin.posts.edit', ["post" => $post, "seo" => $post->seo, 'thumbUrl' => $thumbUrl, "categories" => $this->categories, "postType" => $this->postType]);
+		$sections = $this->templateRepos->getSectionsByOrder($this->postType->template_id);
+		return view('admin.posts.edit', ["post" => $post, "seo" => $post->seo, 'thumbUrl' => $thumbUrl, "categories" => $this->categories, "postType" => $this->postType, 'sections' => $sections]);
 	}
 
 
@@ -151,7 +159,7 @@ class PostController extends Controller {
 			$input['image'] = null;
 		//remove image if checkbox is ticked
 		if(isset($input['remove_image']))
-			$this->postService->removeImage($news);
+			$this->postService->removeImage($post);
 		//update the database object
 		$this->postRepos->update($post->id, $input);
 		//upload new picture if any 
@@ -159,7 +167,7 @@ class PostController extends Controller {
 			$this->postService->uploadImage($post, $input['image']);
 
 		$post->seo->updateFromInput($input);
-		Flash::success('News was updated successfully.');
+		Flash::success('Post was updated successfully.');
 		return Redirect::route('admin.posts.list', [$postTypeId]);
 	}
 
@@ -193,7 +201,9 @@ class PostController extends Controller {
 		$post = $this->postRepos->find($id);
 		$seo = $post->seo;
 
-		return view('admin.posts.translate', ["post" => $post, "seo" => $post->seo, 'locales' => $this->locales, 'locale' => $locale, 'postType' => $this->postType]);
+		$sections = $this->templateRepos->getSectionsByOrder($this->postType->template_id);
+
+		return view('admin.posts.translate', ["post" => $post, "sections" => $sections,"seo" => $post->seo, 'locales' => $this->locales, 'locale' => $locale, 'postType' => $this->postType]);
 	}
 
 
@@ -219,6 +229,5 @@ class PostController extends Controller {
 		Flash::success($this->postType->title.' was translated successfully.');
 		return Redirect::route('admin.posts.list', $this->postType->id);
 	}
-
 
 }

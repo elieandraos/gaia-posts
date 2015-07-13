@@ -5,4 +5,19 @@
 	<br/>
 @endif
 
+
+    
+<p>
+	Post Type Template:
+    {!! Form::select(
+        'template_id', 
+         $templates, 
+        isset($postType)?$postType->template_id:null, 
+        ['class' => 'form-control', 'id' => 'template_id']
+    ) !!} 
+</p>   
+
+  
+
+
 {!! Form::submit('Save Post Type', ['class' => 'btn btn-primary btn-trans']) !!}

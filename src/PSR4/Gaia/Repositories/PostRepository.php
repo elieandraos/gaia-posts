@@ -2,6 +2,9 @@
 
 use App\Models\Post;
 use Gaia\Repositories\PostTypeRepositoryInterface;
+use App\Models\Component;
+use App\Models\ComponentPost;
+use Gaia\Services\ComponentPostService;
 
 class PostRepository extends DbRepository implements PostRepositoryInterface 
 {
@@ -51,7 +54,12 @@ class PostRepository extends DbRepository implements PostRepositoryInterface
 	 */
 	public function create($input)
 	{
-		return Post::create($input);
+		$post = Post::create($input);
+		//save the components values		
+		$componentIds = $post->retrieveComponentIds($input);
+		$this->attachComponentPosts($componentIds, $post->id, $input);
+
+		return $post;
 	}
 
 
@@ -64,6 +72,10 @@ class PostRepository extends DbRepository implements PostRepositoryInterface
 	public function update($id, $input)
 	{
 		$post = $this->find($id);
+		//save the components values		
+		$componentIds = $post->retrieveComponentIds($input);
+		$this->attachComponentPosts($componentIds, $id, $input);
+		
 		return $post->update($input); 
 	}
 
@@ -115,6 +127,12 @@ class PostRepository extends DbRepository implements PostRepositoryInterface
 	}
 
 
+	/**
+	 * Returns the related posts (by category id)
+	 * @param type $post 
+	 * @param type $limit 
+	 * @return type
+	 */
 	public function getAllRelated($post, $limit = 5)
 	{
 		return Post::latest('published_at')
@@ -123,6 +141,42 @@ class PostRepository extends DbRepository implements PostRepositoryInterface
 				->where('id', '!=', $post->id)
 				->take($limit)
 				->get();
+	}
+
+
+
+	/**
+	 * Save the ComponentPost objects
+	 * @param type $componentIds 
+	 * @param type $id post id
+	 * @param type $input 
+	 * @return type
+	 */
+	public function attachComponentPosts($componentIds, $id, $input)
+	{
+		if(is_array($componentIds) && count($componentIds))
+		{
+			$componentPostService = new ComponentPostService;
+			foreach($componentIds as $key => $val)
+			{
+				$ComponentPost = ComponentPost::firstOrCreate(['component_id' => $key, 'post_id' => $id]);
+				$ComponentPost->value = $val['value'];
+				$ComponentPost->save();
+				//Remove the image first if remove_image checkbox is set
+				if(isset($input['remove_image']))
+				{
+					$cp = ComponentPost::find($input['remove_image']);
+					$componentPostService->removeImage($cp);
+				}
+				//if the componenet is an image, upload it and save it to the media library
+				if(is_object($val['value']))
+				{	
+					$componentPostService->uploadImage($ComponentPost, $val['value']);
+					$ComponentPost->value = '';
+					$ComponentPost->save();
+				}
+			}
+		}
 	}
 }
 ?>

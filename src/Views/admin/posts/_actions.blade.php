@@ -6,7 +6,7 @@
 </a>
 
 <a href="{{ route('admin.posts.translate', [$postType->id, $post->id, $locale]) }}">
-	<button type="button" class="btn btn-info btn-trans btn-xs btn-action " data-toggle="tooltip" data-placement="top" title="Translate News">
+	<button type="button" class="btn btn-info btn-trans btn-xs btn-action " data-toggle="tooltip" data-placement="top" title="Translate {!! ucfirst($postType->title) !!}">
 		<i class="fa fa-refresh"></i>
 	</button>
 </a>

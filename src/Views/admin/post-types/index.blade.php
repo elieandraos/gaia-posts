@@ -36,15 +36,16 @@
 					    <tr>
 					      <th>Title</th>
 					      <th>Slug</th>
+					      <th>Template</th>
 					      <th>Action</th>
 					    </tr>
 					  </thead>
 					  <tbody>
-					    @foreach($postTypes as $postType)
+					    @foreach($postTypes as $pt)
 							<tr>
 								<td>
-									{{ $postType->title }}
-									@if(! $postType->getConfiguredRootCategory())
+									{{ $pt->title }}
+									@if(! $pt->getConfiguredRootCategory())
 										<a href="/admin/categories/roots-post-types">
 											<button type="button" class="btn  btn-xs btn-danger " data-toggle="tooltip" data-placement="top" title="Root Category Not Configured.">
 												<i class="fa fa-exclamation-circle"></i>
@@ -52,9 +53,10 @@
 										</a>
 									@endif
 								</td>
-								<td>{!! $postType->slug !!}</td>
+								<td>{!! $pt->slug !!}</td>
+								<td>{!! $pt->template->title !!}</td>
 								<td>
-									@include('admin.post-types._actions', ["postType" => $postType])
+									@include('admin.post-types._actions', ["postType" => $pt])
 								</td>
 							</tr>
 						@endforeach

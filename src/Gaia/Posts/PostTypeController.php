@@ -2,8 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
+//Repositories
 use Gaia\Repositories\PostTypeRepositoryInterface;
+use Gaia\Repositories\TemplateRepositoryInterface;
+//Facades
 use Auth;
 use Redirect;
 use App;
@@ -14,9 +16,11 @@ use View;
 class PostTypeController extends Controller {
 
 
-	public function __construct(PostTypeRepositoryInterface $postTypeRepositoryInterface)
+	public function __construct(PostTypeRepositoryInterface $postTypeRepositoryInterface, TemplateRepositoryInterface $templateRepos)
 	{
 		$this->postTypeRepos = $postTypeRepositoryInterface;
+		$this->templateRepos = $templateRepos;
+
 		$this->authUser = Auth::user();
 
 		//check permissions
@@ -36,7 +40,9 @@ class PostTypeController extends Controller {
 	public function index()
 	{
 		$postTypes = $this->postTypeRepos->getAll();
-		return view('admin.post-types.index', [ 'postTypes' => $postTypes]);
+		$templates = $this->templateRepos->getAll('post')->lists('title', 'id');
+
+		return view('admin.post-types.index', [ 'postTypes' => $postTypes, 'templates' => $templates]);
 	}
 
 
@@ -65,7 +71,8 @@ class PostTypeController extends Controller {
 	public function edit($id)
 	{
 		$postType = $this->postTypeRepos->find($id);
-		return view('admin.post-types.edit', ['postType' => $postType] );
+		$templates = $this->templateRepos->getAll('post')->lists('title', 'id');
+		return view('admin.post-types.edit', ['postType' => $postType, 'templates' => $templates] );
 	}
 
 
@@ -95,6 +102,17 @@ class PostTypeController extends Controller {
 	{
 		$postType = $this->postTypeRepos->find($id);
 		$postType->delete();
+	}
+
+
+	/**
+	 * Check if the root category is set for the post type, and if it have descendants
+	 * @return type
+	 */
+	public function checkCategoryConfiguration($id, $type)
+	{
+		$postType = $this->postTypeRepos->find($id);
+		return view('admin.post-types.configuration', ['postType' => $postType, 'type' => $type]);
 	}
 
 }

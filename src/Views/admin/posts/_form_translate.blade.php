@@ -53,6 +53,23 @@
 </div>
 <!-- Panel end -->
 
+
+<!-- Components and Sections from template -->  
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Translatable</h3>
+    </div>
+    <div class="panel-body">
+        @foreach($sections as $section)
+            @foreach($section->getComponentsByOrder() as $component)
+                @if(in_array($component->component_type_id, [1,2,8]))
+                    {!! $component->renderFormRow('post', $post->id) !!} 
+                @endif
+            @endforeach
+        @endforeach
+    </div>
+</div>
+
 @include('admin.seo._form')
 
 <div class="row">
