@@ -16,7 +16,7 @@
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function()
 {
    
-	//Post Type Routes
+   //Post Type Routes
    Route::get('/post-types', ['as' => 'admin.post-types.list', 'uses' => 'Gaia\Posts\PostTypeController@index']);
    Route::post('/post-types/store', ['as' => 'admin.post-types.store', 'uses' => 'Gaia\Posts\PostTypeController@store']);   
    Route::get('/post-types/{id}/edit', ['as' => 'admin.post-types.edit', 'uses' => 'Gaia\Posts\PostTypeController@edit']);
