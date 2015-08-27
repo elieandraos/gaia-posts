@@ -12,6 +12,8 @@ use App;
 use Input;
 use Flash;
 use View;
+//Models 
+use App\Models\Permission;
 
 class PostTypeController extends Controller {
 
@@ -41,7 +43,6 @@ class PostTypeController extends Controller {
 	{
 		$postTypes = $this->postTypeRepos->getAll();
 		$templates = $this->templateRepos->getAll('post')->lists('title', 'id');
-
 		return view('admin.post-types.index', [ 'postTypes' => $postTypes, 'templates' => $templates]);
 	}
 
@@ -87,6 +88,12 @@ class PostTypeController extends Controller {
 		$input = Input::all();
 		$postType = $this->postTypeRepos->find($id);
 		$postType->update($input);
+		$perm = Permission::firstOrCreate([
+			'name' => 'manage-'.$postType->slug,
+			'display_name' => 'Manage '.$postType->title,
+			'description' => 'Ability to add/edit/delete/translate '.$postType->title
+		]);
+
 		Flash::success('Post Type was updated successfully.');
 		return Redirect::route('admin.post-types.list');
 	}
