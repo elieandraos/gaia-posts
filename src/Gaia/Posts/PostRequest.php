@@ -24,7 +24,7 @@ class PostRequest extends Request {
 	{
 		return [
 			'title' => 'required|min:3',
-			'description' => 'required',
+			'description' => '',
 			'published_at' => 'required',
 			'slug' => 'required',
 			'category_id' => 'required|exists:categories,id'
